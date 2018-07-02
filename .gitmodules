@@ -1,0 +1,9 @@
+[submodule "libgit2"]
+	path = libgit2
+	url = git@github.com:libgit2/libgit2.git
+[submodule "rapidjson"]
+	path = rapidjson
+	url = git@github.com:Tencent/rapidjson.git
+[submodule "pugixml"]
+	path = pugixml
+	url = git@github.com:zeux/pugixml.git
