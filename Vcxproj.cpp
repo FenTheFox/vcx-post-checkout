@@ -126,6 +126,11 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 			files.insert(get_fpath(f));
 	}
 
+	if (folder_) {
+		files_ = files;
+		return;
+	}
+
 	bool f_include = false, f_src = false;
 	boost::uuids::random_generator uuid_gen;
 	if (proj_.first_child().empty()) {

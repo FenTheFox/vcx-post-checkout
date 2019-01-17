@@ -1,6 +1,7 @@
 #include "Sln.hpp"
 
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -23,12 +24,28 @@ void Sln::Save()
 		throw std::runtime_error("Could not open solution file for writing");
 
 	file << HEADER << std::endl;
-	for (const auto &proj : projs_)
-		file << boost::format(PROJ_FMT) % proj.get_name() % proj.get_file() % proj.get_uuid() << std::endl;
+	for (const auto &proj : projs_) {
+		std::string end = proj.get_uuid();
+		if (proj.is_folder()) {
+			end += "\n\tProjectSection(SolutionItems) = preProject\n";
+			for (auto &f : proj.get_files()) {
+				end += "\t\t" + f.string() + " = " + f.string();
+			}
+			end += "\tEndProjectSection";
+		}
+		file << boost::format(PROJ_FMT) % proj.get_name() % proj.get_file().string() % end << std::endl;
+	}
 	file << MID;
-	for (const auto &proj : projs_)
-		file << boost::format(CFG_FMT) % proj.get_uuid();
-	file << boost::format(FOOTER_FMT) %
+
+	std::ostringstream nested;
+	for (const auto &proj : projs_) {
+		if (!proj.is_folder())
+			file << boost::format(CFG_FMT) % proj.get_uuid();
+		else
+			nested << boost::format("\n%s = %s") % proj.get_uuid() % proj.get_parent();
+	}
+
+	file << boost::format(FOOTER_FMT) % nested.str() %
 		boost::algorithm::to_upper_copy(boost::uuids::to_string(boost::uuids::random_generator()())) << std::endl;
 	file.close();
 }

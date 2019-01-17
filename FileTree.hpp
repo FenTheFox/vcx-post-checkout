@@ -41,5 +41,5 @@ struct Directory : public File
 
 	std::set<std::string> get();
 
-	std::set<std::string> get(const std::string &subdir);
+	std::set<std::string> get(const std::string &subdir, bool recursive = true);
 };

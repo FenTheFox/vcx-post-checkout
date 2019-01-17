@@ -41,5 +41,5 @@ class GitRepo
 public:
 	GitRepo();
 
-	std::set<std::string> get_files(std::string &&rel_path);
+	std::set<std::string> get_files(std::string &&rel_path, bool recursive = true);
 };

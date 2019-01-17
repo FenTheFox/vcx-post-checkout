@@ -35,15 +35,15 @@ GitRepo::GitRepo()
     git_libgit2_shutdown();
 }
 
-std::set<std::string> GitRepo::get_files(std::string &&rel_path)
+std::set<std::string> GitRepo::get_files(std::string &&rel_path, bool recursive)
 {
     std::replace(rel_path.begin(), rel_path.end(), '\\', '/');
     if (rel_path.find("./") == 0)
         rel_path = rel_path.substr(2);
     if (rel_path.empty() || rel_path == ".")
-        return paths_.get("");
+        return paths_.get("", recursive);
 
     if (rel_path[rel_path.length() - 1] != '/')
         rel_path += '/';
-    return paths_.get(rel_path);
+    return paths_.get(rel_path, recursive);
 }

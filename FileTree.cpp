@@ -32,7 +32,7 @@ std::set<std::string> Directory::get()
 	std::set<std::string> result;
 	result.insert(name + "/");
 
-	for (auto& n : children) {
+	for (auto &n : children) {
 		if (n->is_directory())
 			for (const auto &o : static_cast<Directory&>(*n).get())
 				result.insert(name + "/" + o);
@@ -42,12 +42,12 @@ std::set<std::string> Directory::get()
 	return result;
 }
 
-std::set<std::string> Directory::get(const std::string &subdir)
+std::set<std::string> Directory::get(const std::string &subdir, bool recursive)
 {
 	std::set<std::string> result;
 	if (subdir.empty()) {
-		for (auto& n : children) {
-			if (n->is_directory())
+		for (auto &n : children) {
+			if (recursive && n->is_directory())
 				for (const auto &o : static_cast<Directory&>(*n).get())
 					result.insert(o);
 			else
@@ -60,7 +60,7 @@ std::set<std::string> Directory::get(const std::string &subdir)
 		sub = child.length() + 1 < subdir.length() ? subdir.substr(child.length() + 1) : "";
 	for (auto &n : children) {
 		if (n->is_directory() && n->name == child)
-			return static_cast<Directory&>(*n).get(sub);
+			return static_cast<Directory&>(*n).get(sub, recursive);
 	}
-	return std::set<std::string>();
+	return std::set<std::string>{};
 }
