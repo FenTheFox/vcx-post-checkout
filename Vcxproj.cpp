@@ -127,7 +127,9 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 	}
 
 	if (folder_) {
-		files_ = files;
+		for (auto &p : files)
+			if (!p.has_parent_path())
+				files_.insert(p);
 		return;
 	}
 
@@ -199,7 +201,8 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 		node = n.child(MAKE_CMD);
 		if (!node) node = n.append_child(MAKE_CMD);
 		auto make_cmd = make_cmd_;
-		if (!release_env_.empty() && n.attribute("Condition").as_string() == "'$(Configuration)|$(Platform)'=='Release|x64'"s)
+		if (!release_env_.empty() &&
+			n.attribute("Condition").as_string() == "'$(Configuration)|$(Platform)'=='Release|x64'"s)
 			make_cmd += " " + release_env_;
 
 		updated_ |= node.text().get() != make_cmd;

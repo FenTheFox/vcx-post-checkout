@@ -25,24 +25,26 @@ void Sln::Save()
 
 	file << HEADER << std::endl;
 	for (const auto &proj : projs_) {
-		std::string end = proj.get_uuid();
 		if (proj.is_folder()) {
-			end += "\n\tProjectSection(SolutionItems) = preProject\n";
-			for (auto &f : proj.get_files()) {
-				end += "\t\t" + f.string() + " = " + f.string();
-			}
+			std::string end{"\n\tProjectSection(SolutionItems) = preProject\n"};
+			for (auto &f : proj.get_files())
+				end += "\t\t" + f.string() + " = " + f.string() + "\n";
 			end += "\tEndProjectSection";
-		}
-		file << boost::format(PROJ_FMT) % proj.get_name() % proj.get_file().string() % end << std::endl;
+			file << boost::format(FOLDER_FMT) % proj.get_name() % proj.get_file().string() % proj.get_uuid() % end
+			     << std::endl;
+		} else
+			file << boost::format(PROJ_FMT) % proj.get_name() % proj.get_file().string() % proj.get_uuid()
+				 << std::endl;
 	}
 	file << MID;
 
 	std::ostringstream nested;
 	for (const auto &proj : projs_) {
-		if (!proj.is_folder())
+		if (!proj.is_folder()) {
 			file << boost::format(CFG_FMT) % proj.get_uuid();
-		else
-			nested << boost::format("\n%s = %s") % proj.get_uuid() % proj.get_parent();
+			if (!proj.get_parent().empty())
+				nested << boost::format("\n\t\t%s = %s") % proj.get_uuid() % proj.get_parent();
+		}
 	}
 
 	file << boost::format(FOOTER_FMT) % nested.str() %

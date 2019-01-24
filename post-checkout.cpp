@@ -83,7 +83,10 @@ int main(int argc, char *argv[])
 	try {
 		GitRepo repo;
 		for (auto &p : projs) {
-			p.Update(repo.get_files(std::string(p.get_file().parent_path().string()), !p.is_folder()));
+			if (p.is_folder())
+				p.Update(repo.get_files(std::string(p.get_file().string()), true));
+			else
+				p.Update(repo.get_files(std::string(p.get_file().parent_path().string()), false));
 			p.Save();
 		}
 
@@ -91,6 +94,6 @@ int main(int argc, char *argv[])
 		sln.Save();
 	}
 	catch (const std::exception &ex) {
-		std::cerr << ex.what() << std::endl;
+		std::cerr << "Exception encountered: " << ex.what() << std::endl;
 	}
 }

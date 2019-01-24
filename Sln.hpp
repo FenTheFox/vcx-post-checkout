@@ -13,6 +13,8 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1)",
 	*PROJ_FMT = R"(Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "%s", "%s", "%s"
 EndProject)",
+	*FOLDER_FMT = R"(Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "%s", "%s", "%s"%s
+EndProject)",
 	*MID = R"(Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B0498A5-FDC9-4025-9FEC-C3B5C19616A4}"
 	ProjectSection(SolutionItems) = preProject
 		.git\projects.json = .git\projects.json
