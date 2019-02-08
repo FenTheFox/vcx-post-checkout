@@ -47,7 +47,8 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	std::string default_defines, default_includes, default_make_cmd("make -j"), default_clean_tgt("clean"), release_env;
+	std::string default_defines, default_includes, default_make_cmd{"make -j"}, default_clean_tgt{"clean"},
+		release_env;
 	if (doc.HasMember("default_defines"))   default_defines   = doc["default_defines"].GetString();
 	if (doc.HasMember("default_includes"))  default_includes  = doc["default_includes"].GetString();
 	if (doc.HasMember("default_make_cmd"))  default_make_cmd  = doc["default_make_cmd"].GetString();
@@ -56,27 +57,29 @@ int main(int argc, char *argv[])
 
 	std::vector<Vcxproj> projs;
 	for (auto &p : doc["projects"].GetArray()) {
-		std::string defines = default_defines, includes = default_includes, make_cmd = default_make_cmd,
-			clean_tgt = default_clean_tgt;
+		bool meta_dirs = !p.HasMember("meta_dirs") || p["meta_dirs"].GetBool();
+		std::string defines{default_defines}, includes{default_includes}, make_cmd{default_make_cmd},
+			clean_tgt{default_clean_tgt};
 		if (p.HasMember("defines")) defines = p["defines"].GetString() + ";"s + default_defines;
 		if (p.HasMember("includes")) includes = p["includes"].GetString() + ";"s + default_includes;
 		if (p.HasMember("make_cmd")) make_cmd = p["make_cmd"].GetString();
 		if (p.HasMember("clean_tgt")) clean_tgt = p["clean_tgt"].GetString();
 		if (p.HasMember("recurse") && p["recurse"].GetBool()) {
 			fs::path file{p["file"].GetString()};
-			Vcxproj parent(file.stem().string());
+			Vcxproj parent{file.stem().string()};
 
 			projs.push_back(parent);
 			for (fs::directory_iterator it{file.parent_path()}; it != fs::directory_iterator{}; ++it) {
 				if (!fs::is_directory(it->status()) || fs::is_symlink(it->status())) continue;
 
 				std::string fname{it->path().filename().string()};
-				projs.emplace_back(it->path().string() + '\\' + fname + ".vcxproj", p["remote_dir"].GetString() + fname,
-								   defines, includes, make_cmd, clean_tgt, release_env, parent.get_uuid());
+				projs.emplace_back(meta_dirs, it->path().string() + '\\' + fname + ".vcxproj",
+								   p["remote_dir"].GetString() + fname, defines, includes, make_cmd, clean_tgt,
+								   release_env, parent.get_uuid());
 			}
 		} else {
-			projs.emplace_back(p["file"].GetString(), p["remote_dir"].GetString(), defines,
-							   includes, make_cmd, clean_tgt, release_env);
+			projs.emplace_back(meta_dirs, p["file"].GetString(), p["remote_dir"].GetString(), defines, includes,
+							   make_cmd, clean_tgt, release_env);
 		}
 	}
 

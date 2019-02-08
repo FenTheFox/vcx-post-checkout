@@ -99,7 +99,7 @@ inline std::string get_fpath(const std::string &f)
 	return f.find('/') == std::string::npos ? f : "./" + f;
 }
 
-inline std::string get_ffilter(const fs::path &f)
+inline std::string get_ffilter(const fs::path &f, bool meta_dirs)
 {
 	if (f.has_parent_path() && f.parent_path() != ".") {
 		auto path = f.parent_path().string().substr(2);
@@ -108,9 +108,9 @@ inline std::string get_ffilter(const fs::path &f)
 	}
 
 	auto ends_with = [&f](const char *c) { return f.extension() == c; };
-	if (std::any_of(INCLUDES, INCLUDES + sizeof INCLUDES / sizeof INCLUDES[0], ends_with))
+	if (meta_dirs && std::any_of(INCLUDES, INCLUDES + sizeof INCLUDES / sizeof INCLUDES[0], ends_with))
 		return INC;
-	if (std::any_of(SOURCES, SOURCES + sizeof SOURCES / sizeof INCLUDES[0], ends_with))
+	if (meta_dirs && std::any_of(SOURCES, SOURCES + sizeof SOURCES / sizeof INCLUDES[0], ends_with))
 		return SRC;
 	return "";
 }
@@ -269,7 +269,7 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 		nodes.first.append_child(name).append_attribute("Include").set_value(f.string().c_str());
 		auto child = nodes.second.append_child(name);
 		child.append_attribute("Include").set_value(f.string().c_str());
-		auto filter = get_ffilter(f);
+		auto filter = get_ffilter(f, meta_dirs_);
 		if (!filter.empty())
 			child.append_child("Filter").text().set(filter.c_str());
 		if (filter == INC)
