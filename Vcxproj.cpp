@@ -18,7 +18,7 @@ namespace
 {
 constexpr const char *INCLUDES[] = { ".h", ".hh", ".hpp" }, *SOURCES[] = { ".c", ".cc", ".cpp" },
                      *REMOTE_DIR = "RemoteProjectDir", *PREPROCESSOR_DEFINES = "NMakePreprocessorDefinitions",
-                     *INCLUDE_PATH = "NMakeIncludeSearchPath", *MAKE_CMD = "RemoteBuildCommandLine",
+                     *INCLUDE_PATH = "IncludePath", *MAKE_CMD = "RemoteBuildCommandLine",
                      *CLEAN_TGT = "RemoteCleanCommandLine",
                      *EMPTY_FILTERS = R"(<?xml version='1.0' encoding='UTF-8'?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -69,11 +69,11 @@ const std::string EMPTY_PROJECT = R"(<?xml version='1.0' encoding='UTF-8'?>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
 		<UseDebugLibraries>true</UseDebugLibraries>
-		<ConfigurationType>Makefile</ConfigurationType>
+		<ConfigurationType>StaticLibrary</ConfigurationType>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
 		<UseDebugLibraries>false</UseDebugLibraries>
-		<ConfigurationType>Makefile</ConfigurationType>
+		<ConfigurationType>StaticLibrary</ConfigurationType>
 	</PropertyGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
 	<ImportGroup Label="ExtensionSettings"/>
