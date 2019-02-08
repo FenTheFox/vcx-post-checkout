@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 		if (p.HasMember("includes")) includes = p["includes"].GetString() + ";"s + default_includes;
 		if (p.HasMember("make_cmd")) make_cmd = p["make_cmd"].GetString();
 		if (p.HasMember("clean_tgt")) clean_tgt = p["clean_tgt"].GetString();
-		if (p["recurse"].GetBool()) {
+		if (p.HasMember("recurse") && p["recurse"].GetBool()) {
 			fs::path file{p["file"].GetString()};
 			Vcxproj parent(file.stem().string());
 
@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
 		GitRepo repo;
 		for (auto &p : projs) {
 			if (p.is_folder())
-				p.Update(repo.get_files(std::string(p.get_file().string()), true));
+				p.Update(repo.get_files(std::string(p.get_file().string()), false));
 			else
-				p.Update(repo.get_files(std::string(p.get_file().parent_path().string()), false));
+				p.Update(repo.get_files(std::string(p.get_file().parent_path().string()), true));
 			p.Save();
 		}
 

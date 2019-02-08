@@ -50,7 +50,7 @@ std::set<std::string> Directory::get(const std::string &subdir, bool recursive)
 			if (recursive && n->is_directory())
 				for (const auto &o : static_cast<Directory&>(*n).get())
 					result.insert(o);
-			else
+			else if (!n->is_directory())
 				result.insert(n->name);
 		}
 		return result;

@@ -28,13 +28,13 @@ void Sln::Save()
 		if (proj.is_folder()) {
 			std::string end{"\n\tProjectSection(SolutionItems) = preProject\n"};
 			for (auto &f : proj.get_files())
-				end += "\t\t" + f.string() + " = " + f.string() + "\n";
+				end += (boost::format("\t\t%1% = %1%\n") % f.string()).str();
 			end += "\tEndProjectSection";
 			file << boost::format(FOLDER_FMT) % proj.get_name() % proj.get_file().string() % proj.get_uuid() % end
 			     << std::endl;
 		} else
 			file << boost::format(PROJ_FMT) % proj.get_name() % proj.get_file().string() % proj.get_uuid()
-				 << std::endl;
+			     << std::endl;
 	}
 	file << MID;
 

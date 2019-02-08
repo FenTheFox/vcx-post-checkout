@@ -129,7 +129,7 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 	if (folder_) {
 		for (auto &p : files)
 			if (!p.has_parent_path())
-				files_.insert(p);
+				files_.insert(file_ / p);
 		return;
 	}
 
