@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 				if (!fs::is_directory(it->status()) || fs::is_symlink(it->status())) continue;
 
 				std::string fname{it->path().filename().string()};
-				projs.emplace_back(meta_dirs, it->path().string() + '\\' + fname + ".vcxproj",
+				projs.emplace_back(meta_dirs, it->path().string() + '/' + fname + ".vcxproj",
 								   p["remote_dir"].GetString() + fname, defines, includes, make_cmd, clean_tgt,
 								   release_env, parent.get_uuid());
 			}
