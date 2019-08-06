@@ -52,3 +52,7 @@ add_subdirectory(pugixml)
 add_executable(post-checkout FileTree.cpp GitRepo.cpp post-checkout.cpp Sln.cpp Vcxproj.cpp)
 target_compile_features(post-checkout PRIVATE cxx_std_14)
 target_link_libraries(post-checkout pugixml git2 ${Boost_LIBRARIES})
+
+if(MSVC)
+	target_link_libraries(post-checkout bcrypt)
+endif()
