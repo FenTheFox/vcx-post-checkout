@@ -12,7 +12,7 @@ class GitRepo
 {
 	static constexpr const char BAD_PATH_CHARS[] = { '\x00', '"', '*', ':', '<', '>', '?', '|' };
 
-	char err_buf_[2048];
+	char err_buf_[2048]{0};
 	Directory paths_;
 
 	void AddPath(std::string &&path)

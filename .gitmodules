@@ -7,3 +7,9 @@
 [submodule "pugixml"]
 	path = pugixml
 	url = https://github.com/zeux/pugixml.git
+[submodule "stduuid"]
+	path = stduuid
+	url = https://github.com/mariusbancila/stduuid
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt

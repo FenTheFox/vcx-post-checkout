@@ -4,11 +4,10 @@
 #include <set>
 #include <string>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <pugixml.hpp>
+
+#include "fs.hpp"
+#include "uuid.hpp"
 
 extern bool debug;
 
@@ -92,7 +91,7 @@ const std::string EMPTY_PROJECT = R"(<?xml version='1.0' encoding='UTF-8'?>
 	<ItemDefinitionGroup/>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
 	<ImportGroup Label="ExtensionTargets"/>
-</Project>)", UUID("__UUID__"), NAME("__NAME__"), SRC("src"), INC("include");
+</Project>)", UUID_("__UUID__"), NAME("__NAME__"), SRC("src"), INC("include");
 
 inline std::string get_fpath(const std::string &f)
 {
@@ -134,7 +133,6 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 	}
 
 	bool f_include = false, f_src = false;
-	boost::uuids::random_generator uuid_gen;
 	if (proj_.first_child().empty()) {
 		auto res = proj_.load_file(file_.c_str());
 		if (!res && res.status != pugi::status_file_not_found)
@@ -143,8 +141,8 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 		if (!res) {
 			new_ = true;
 			auto str = EMPTY_PROJECT;
-			size_t pos = str.find(UUID);
-			str.replace(pos, UUID.size(), boost::algorithm::to_upper_copy(boost::uuids::to_string(uuid_gen())));
+			size_t pos = str.find(UUID_);
+			str.replace(pos, UUID_.size(), gen_uuid());
 			pos = str.find(NAME);
 			str.replace(pos, NAME.size(), file_.stem().string());
 			res = proj_.load_string(str.c_str());
@@ -314,7 +312,7 @@ void Vcxproj::Update(std::set<std::string> &&new_files)
 			std::cout << "\tadd: " << folder << std::endl;
 		auto node = filter.append_child("Filter");
 		node.append_attribute("Include").set_value(folder.c_str());
-		node.append_child("UniqueIdentifier").text().set(("{" + boost::uuids::to_string(uuid_gen()) + "}").c_str());
+		node.append_child("UniqueIdentifier").text().set(("{" + gen_uuid() + "}").c_str());
 		folders_.insert(f);
 	}
 }

@@ -3,13 +3,10 @@
 #include <string>
 #include <set>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <pugixml.hpp>
 
-namespace fs = boost::filesystem;
+#include "fs.hpp"
+#include "uuid.hpp"
 
 class Vcxproj
 {
@@ -20,10 +17,7 @@ class Vcxproj
 	std::set<fs::path> files_, folders_;
 
 public:
-	Vcxproj(const std::string &name) :
-		folder_(true), file_(name),
-		uuid_("{" + boost::algorithm::to_upper_copy(boost::uuids::to_string(boost::uuids::random_generator{}())) + "}")
-	{}
+	Vcxproj(const std::string &name) : folder_(true), file_(name), uuid_("{" + gen_uuid() + "}") {}
 
 	Vcxproj(bool meta_dirs, const std::string &file, const std::string &remote_dir, const std::string &defines,
 	        const std::string &includes, const std::string &make_cmd, const std::string &clean_tgt,

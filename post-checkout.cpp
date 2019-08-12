@@ -3,8 +3,6 @@
 #include <string>
 #include <typeinfo>
 
-#include <boost/filesystem.hpp>
-
 #ifdef __GNUC__
 #include <cxxabi.h>
 #endif
@@ -14,12 +12,12 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/error/en.h>
 
+#include "fs.hpp"
 #include "GitRepo.hpp"
 #include "Vcxproj.hpp"
 #include "Sln.hpp"
 
 using namespace std::string_literals;
-namespace fs = boost::filesystem;
 
 bool debug = false;
 

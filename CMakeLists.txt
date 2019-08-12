@@ -1,12 +1,8 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.6 FATAL_ERROR)
 
 PROJECT(post-checkout CXX)
-set(Boost_USE_STATIC_LIBS ON CACHE BOOL "Use static libraries from Boost")
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED COMPONENTS filesystem)
 
-include_directories("${PROJECT_SOURCE_DIR}/libgit2/include" "${PROJECT_SOURCE_DIR}/pugixml/src" "${PROJECT_SOURCE_DIR}/rapidjson/include" ${Boost_INCLUDE_DIRS})
+include_directories("${PROJECT_SOURCE_DIR}/fmt/include" "${PROJECT_SOURCE_DIR}/libgit2/include" "${PROJECT_SOURCE_DIR}/pugixml/src" "${PROJECT_SOURCE_DIR}/rapidjson/include" "${PROJECT_SOURCE_DIR}/stduuid/include")
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(BUILD_CLAR OFF CACHE BOOL "" FORCE)
@@ -21,11 +17,9 @@ endif()
 
 # Platform specific compilation flags
 if(MSVC)
-	# disable autolinking in boost
-	add_definitions( -DBOOST_ALL_NO_LIB )
-
 	# /GF - String pooling
 	# /MP - Parallel build
+	add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 	set(CMAKE_C_FLAGS "/GF /MP /nologo ${CMAKE_C_FLAGS}")
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D_DEBUG")
 	set(CMAKE_C_FLAGS_RELEASE "/Oy /GL /Gy")
@@ -46,13 +40,15 @@ else()
 	set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
 endif()
 
+add_subdirectory(fmt)
 add_subdirectory(libgit2)
 add_subdirectory(pugixml)
 
 add_executable(post-checkout FileTree.cpp GitRepo.cpp post-checkout.cpp Sln.cpp Vcxproj.cpp)
-target_compile_features(post-checkout PRIVATE cxx_std_14)
-target_link_libraries(post-checkout pugixml git2 ${Boost_LIBRARIES})
+target_compile_features(post-checkout PRIVATE cxx_std_17)
+target_link_libraries(post-checkout fmt pugixml git2)
 
 if(MSVC)
-	target_link_libraries(post-checkout bcrypt)
+else()
+	target_link_libraries(post-checkout stdc++fs)
 endif()
