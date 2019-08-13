@@ -26,8 +26,8 @@ public:
 	{}
 
 	Vcxproj(bool meta_dirs, const std::string &file, const std::string &remote_dir, const std::string &defines,
-		    const std::string &includes, const std::string &make_cmd, const std::string &clean_tgt,
-		    const std::string &release_env, const std::string &p_uuid = "") :
+	        const std::string &includes, const std::string &make_cmd, const std::string &clean_tgt,
+	        const std::string &release_env, const std::string &p_uuid = "") :
 		meta_dirs_(meta_dirs), folder_(false), file_(file), remote_dir_(remote_dir), defines_(defines),
 		includes_(includes), make_cmd_("cd $(RemoteProjectDir) && " + make_cmd),
 		clean_cmd_(make_cmd_ + " " + clean_tgt), release_env_(release_env), parent_uuid_(p_uuid)
