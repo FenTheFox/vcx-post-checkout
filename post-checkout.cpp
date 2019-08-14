@@ -1,8 +1,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
 #include <boost/filesystem.hpp>
+
+#ifdef __GNUC__
+#include <cxxabi.h>
+#endif
 
 #include <rapidjson/document.h>
 #include <rapidjson/encodedstream.h>
@@ -17,6 +22,25 @@ using namespace std::string_literals;
 namespace fs = boost::filesystem;
 
 bool debug = false;
+
+namespace
+{
+template<typename T>
+inline std::string type_name(const T& ex)
+{
+#ifdef __GNUC__
+	int status = 0;
+	auto name = abi::__cxa_demangle(typeid(ex).name(), nullptr, nullptr, &status);
+	if (name == nullptr)
+		return typeid(ex).name();
+	std::string res{name};
+	free(name);
+	return res;
+#else
+	return typeid(ex).name();
+#endif
+}
+}
 
 int main(int argc, char *argv[])
 {
@@ -97,6 +121,6 @@ int main(int argc, char *argv[])
 		sln.Save();
 	}
 	catch (const std::exception &ex) {
-		std::cerr << "Exception encountered: " << ex.what() << std::endl;
+		std::cerr << type_name(ex) << " encountered: " << ex.what() << std::endl;
 	}
 }
