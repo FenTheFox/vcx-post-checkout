@@ -94,7 +94,8 @@ int main(int argc, char *argv[])
 
 			projs.push_back(parent);
 			for (fs::directory_iterator it{file.parent_path()}; it != fs::directory_iterator{}; ++it) {
-				if (!fs::is_directory(it->status()) || fs::is_symlink(it->status())) continue;
+				if (!fs::is_directory(it->symlink_status()))
+					continue;
 
 				std::string fname{it->path().filename().string()};
 				projs.emplace_back(meta_dirs, it->path().string() + '/' + fname + ".vcxproj",
